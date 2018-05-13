@@ -1,11 +1,11 @@
-package org.hneu;
+package org.hneu.domain;
 
 import java.io.Serializable;
 
 public class DimManufacturer implements Serializable {
+
     private int id;
     private String manufacturer;
-    private int dimManufacturer;
 
     public int getId() {
         return id;
@@ -23,11 +23,4 @@ public class DimManufacturer implements Serializable {
         this.manufacturer = manufacturer;
     }
 
-    public int getDimManufacturer() {
-        return dimManufacturer;
-    }
-
-    public void setDimManufacturer(int dimManufacturer) {
-        this.dimManufacturer = dimManufacturer;
-    }
 }

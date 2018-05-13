@@ -1,4 +1,4 @@
-package org.hneu;
+package org.hneu.domain;
 
 import java.io.Serializable;
 
@@ -8,7 +8,6 @@ public class DimTovar implements Serializable {
     private String tovar;
     private double price;
     private double purchasePrice;
-    private int dimTovarId;
 
     public int getId() {
         return id;
@@ -42,11 +41,4 @@ public class DimTovar implements Serializable {
         this.purchasePrice = purchasePrice;
     }
 
-    public int getDimTovarId() {
-        return dimTovarId;
-    }
-
-    public void setDimTovarId(int dimTovarId) {
-        this.dimTovarId = dimTovarId;
-    }
 }

@@ -1,8 +1,8 @@
 package org.hneu;
 
-
 import com.mongodb.hadoop.MongoInputFormat;
 import com.mongodb.spark.MongoSpark;
+import com.mongodb.spark.rdd.api.java.JavaMongoRDD;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -12,12 +12,18 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
 import org.apache.spark.sql.SparkSession;
 import org.bson.BSONObject;
+import org.bson.Document;
+import org.hneu.domain.DimManufacturer;
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.ApplicationFrame;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,38 +37,28 @@ public class Main extends ApplicationFrame {
         for (int i =0; i < 100_000; i++) {
             DimManufacturer dimManufacturer = new DimManufacturer();
             dimManufacturer.setManufacturer("Х/з \"Салтівський\" " + i);
-            dimManufacturer.setDimManufacturer(i);
             manufacturers.add(dimManufacturer);
         }
     }
 
-    private static XYDataset createDataSet(JavaRDD<Row> filterRdd) {
+    private static XYDataset createDataSet(JavaRDD<Document> filterRdd) {
         DefaultXYDataset ds = new DefaultXYDataset();
 
         ChartFactory.createTimeSeriesChart("TimeSeries title", "AxisLabel",
                 "valueAxis", new DefaultXYDataset(), true, true, true);
 
-        TimeSeries timeSeries = new TimeSeries("Jan-Dec2017");
-        List<Row> filterList = filterRdd.collect();
+        TimeSeries series = new TimeSeries("Jan-Dec2017");
+        List<Document> filterList = filterRdd.collect();
         int j = 0;
-        for (Row row : filterList) {
-            double[][] series = new double[2][13];
-            List<String> items = row.getList(0);
-            for (int i = 1; i < 12; i++) {
-                //timeSeries.add(new Month(i, Integer.parseInt(items.get(0))), new Double(items.get(i)));
-                series[0][i] = (double)i;
-                series[1][i] = new Double(items.get(i));
-            }
-            ds.addSeries("Series-" + j, series);
-            j = j + 1;
-        }
+//        for (Document document : filterList) {
+//           series.add();
+//        }
         return ds;
     }
 
-
         public static void main(String[] args) {
 
-            System.setProperty("hadoop.home.dir", "D:\\ХНЕУ\\winutil");
+            System.setProperty("hadoop.home.dir", "D:\\Spark");
 
             /* Create the SparkSession.
              * If config arguments are passed from the command line using --conf,
@@ -71,8 +67,8 @@ public class Main extends ApplicationFrame {
             SparkSession spark = SparkSession.builder()
                     .master("local")
                     .appName("MongoSparkConnectorIntro")
-                    .config("spark.mongodb.input.uri", "mongodb://127.0.0.1/hleb.manufacturers")
-                    .config("spark.mongodb.output.uri", "mongodb://127.0.0.1/hleb.manufacturers")
+                    .config("spark.mongodb.input.uri", "mongodb://127.0.0.1/hlebDB.manufacturers")
+                    .config("spark.mongodb.output.uri", "mongodb://127.0.0.1/hlebDB.manufacturers")
                     .getOrCreate();
 
             // Create a JavaSparkContext using the SparkSession's SparkContext object
@@ -88,7 +84,7 @@ public class Main extends ApplicationFrame {
             // MongoDB connection string naming a collection to use.
             // If using BSON, use "mapred.input.dir" to configure the directory
             // where BSON files are located instead.
-            mongodbConfig.set("spark.mongodb.input.uri", "mongodb://127.0.0.1/hleb.manufacturers");
+            mongodbConfig.set("spark.mongodb.input.uri", "mongodb://127.0.0.1/hlebDB.manufacturers");
 
             // Create an RDD backed by the MongoDB collection.
             JavaPairRDD<Object, BSONObject> documents = jsc.newAPIHadoopRDD(
@@ -111,29 +107,26 @@ public class Main extends ApplicationFrame {
             Dataset dataset = sqlContext.createDataFrame(manufacturerJavaRDD, DimManufacturer.class);
             dataset.createOrReplaceTempView("manufacturers");
 //
-            //MongoSpark.save(dataset);
+           // MongoSpark.save(dataset);
 
-            //JavaMongoRDD<Document> rdd = MongoSpark.load(jsc);
-            Dataset<Row> dfc = MongoSpark.load(jsc).toDF();
-            JavaRDD<Row> rdd = dfc.javaRDD();
-            JavaRDD<Row> filterRdd = rdd.filter(row -> {
-                if ("7".equals(row.getList(1).get(0).toString()))
-                    return true;
-                return false;
-            });
+            JavaMongoRDD<Document> rdd = MongoSpark.load(jsc);
+            Dataset<Row> datasetChart = MongoSpark.load(jsc).toDF();
+//            JavaRDD<Row> rdd = dfc.javaRDD();
+            JavaRDD<Document> filterRdd = rdd.filter(row ->
+                    (Integer) row.get("dimManufacturer") % 3 == 0);
 
             System.out.println(filterRdd.count());
 
             //JavaMongoRDD<Document> filterRdd = rdd.withPipeline(singletonList(Document.parse("{ $match: { dimManufacturer : 99998 } }")));
 
-//            JFreeChart chart = ChartFactory.createTimeSeriesChaSrt("TimeSeries title", "AxisLabel",
-//                    "valueAxis", new DefaultXYDataset(), true, true, true);
-//            ChartPanel chartPanel = new ChartPanel(chart);
-//            chartPanel.setPreferredSize(new Dimension(560, 370));
-//            chartPanel.setMouseZoomable(true, false);
-//            JFrame jFrame = new JFrame();
-//            jFrame.setContentPane(chartPanel);
-//            jFrame.setVisible(true);
+            JFreeChart chart = ChartFactory.createTimeSeriesChart("TimeSeries title", "AxisLabel",
+                    "valueAxis", new DefaultXYDataset()/*createDataSet(filterRdd, datasetChart)*/, true, true, true);
+            ChartPanel chartPanel = new ChartPanel(chart);
+            chartPanel.setPreferredSize(new Dimension(560, 370));
+            chartPanel.setMouseZoomable(true, false);
+            JFrame jFrame = new JFrame();
+            jFrame.setContentPane(chartPanel);
+            jFrame.setVisible(true);
         }
 }
 
