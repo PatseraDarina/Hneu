@@ -58,8 +58,6 @@ public class Main extends ApplicationFrame {
 
         public static void main(String[] args) {
 
-            System.setProperty("hadoop.home.dir", "D:\\Spark");
-
             /* Create the SparkSession.
              * If config arguments are passed from the command line using --conf,
              * parse args for the values to set.
@@ -96,7 +94,7 @@ public class Main extends ApplicationFrame {
 
             List<DimManufacturer> manufacturers = new LinkedList<>();
 
-            //fill(manufacturers);
+            fill(manufacturers);
 
             JavaRDD<DimManufacturer> manufacturerJavaRDD = jsc.parallelize(manufacturers);
 
@@ -107,15 +105,15 @@ public class Main extends ApplicationFrame {
             Dataset dataset = sqlContext.createDataFrame(manufacturerJavaRDD, DimManufacturer.class);
             dataset.createOrReplaceTempView("manufacturers");
 //
-           // MongoSpark.save(dataset);
+            MongoSpark.save(dataset);
 
             JavaMongoRDD<Document> rdd = MongoSpark.load(jsc);
             Dataset<Row> datasetChart = MongoSpark.load(jsc).toDF();
 //            JavaRDD<Row> rdd = dfc.javaRDD();
-            JavaRDD<Document> filterRdd = rdd.filter(row ->
-                    (Integer) row.get("dimManufacturer") % 3 == 0);
+//            JavaRDD<Document> filterRdd = rdd.filter(row ->
+//                    (Integer) row.get("dimManufacturer") % 3 == 0);
 
-            System.out.println(filterRdd.count());
+          //  System.out.println(filterRdd.count());
 
             //JavaMongoRDD<Document> filterRdd = rdd.withPipeline(singletonList(Document.parse("{ $match: { dimManufacturer : 99998 } }")));
 

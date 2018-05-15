@@ -6,8 +6,8 @@ public class DimTovar implements Serializable {
 
     private int id;
     private String tovar;
-    private double price;
-    private double purchasePrice;
+    private int price;
+    private int purchasePrice;
 
     public int getId() {
         return id;
@@ -17,28 +17,28 @@ public class DimTovar implements Serializable {
         this.id = id;
     }
 
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public int getPurchasePrice() {
+        return purchasePrice;
+    }
+
+    public void setPurchasePrice(int purchasePrice) {
+        this.purchasePrice = purchasePrice;
+    }
+
     public String getTovar() {
         return tovar;
     }
 
     public void setTovar(String tovar) {
         this.tovar = tovar;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public double getPurchasePrice() {
-        return purchasePrice;
-    }
-
-    public void setPurchasePrice(double purchasePrice) {
-        this.purchasePrice = purchasePrice;
     }
 
 }

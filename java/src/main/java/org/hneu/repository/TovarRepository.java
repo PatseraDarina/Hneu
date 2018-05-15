@@ -17,7 +17,7 @@ public class TovarRepository {
     String[] hlebName = new String[] {"Baton", "Bulka molochnaya", "Cherniy hleb", "Keks vanilnuy"};
 
     private void fill(List<DimTovar> tovars) {
-        double price;
+        int price;
         for (int i = 0; i < 10_000; i++) {
             DimTovar dimTovar = new DimTovar();
             dimTovar.setId(i);
