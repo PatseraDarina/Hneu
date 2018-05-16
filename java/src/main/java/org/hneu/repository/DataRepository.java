@@ -5,61 +5,67 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.SQLContext;
-import org.hneu.domain.FactSale;
+import org.apache.spark.sql.SparkSession;
+import org.hneu.domain.DimData;
 
-import javax.xml.crypto.Data;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 public class DataRepository {
 
+    private void fill(List<DimData> dates) throws ParseException {
+//        SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+//        Date startDate = sdf.parse("31-08-1982 10:20:56");
+//        Date endDate = sdf.parse("09-09-1982 10:20:56");
+//        LocalDateTime startDateTime = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+//        LocalDateTime endDateTime = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        int i = 0;
+//        for (LocalDateTime dateTime = startDateTime; dateTime.isBefore(endDateTime); dateTime = dateTime.plusDays(1)) {
+//            DimData dimData = new DimData();
+//            dimData.setDate(dateTime);
+//            dimData.setDayMonth(dateTime.getDayOfMonth());
+//            dimData.setNumMonth(dateTime.getMonthValue());
+//            dimData.setYear(dateTime.getYear());
+//            dimData.setId(i++);
+//            dates.add(dimData);
+//        }
+        DimData dimData = new DimData();
+        dimData.setId(12);
+        dates.add(dimData);
 
-    private void fill(List<FactSale> sales) throws ParseException {
-        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar calendar = Calendar.getInstance();
-        String startDate = "2010-02-12";
-        String endDate = "2017-10-3";
-        calendar.setTime(sdf.parse(startDate));
-        calendar.add(Calendar.DATE, 1);
-        Date newDate = calendar.getTime();
-
-        int startDay = 10;
-        int startMonth;
-        int startYear = 2010;
-
-        int endDay = 5;
-        int endMonth;
-        int endYear = 2018;
-        String date;
-
-        for (int i = startYear; i < endYear; i++) {
-            for (int j = 1; j < endDay; j++) {
-                startDay += j;
-            }
-        }
-
-        for (int i = 0; i < 10_000; i++) {
-            FactSale factSale = new FactSale();
-            factSale.setDataId(new Random().nextInt(10_000));
-            factSale.setTovarId(new Random().nextInt(10_000));
-            factSale.setManufacturerId(new Random().nextInt(10_000));
-            factSale.setCost(new Random().nextInt());
-            sales.add(factSale);
-        }
     }
 
     private void addAll(JavaSparkContext jsc) throws ParseException {
-        List<FactSale> sales = new LinkedList<>();
-        fill(sales);
-        JavaRDD<FactSale> saleJavaRDD = jsc.parallelize(sales);
+        List<DimData> datas = new LinkedList<>();
+        fill(datas);
+        JavaRDD<DimData> dataJavaRDD = jsc.parallelize(datas);
         SQLContext sqlContext = new SQLContext(jsc);
-        Dataset dataset = sqlContext.createDataFrame(saleJavaRDD, FactSale.class);
-        MongoSpark.save(dataset);
+        Dataset dataset = sqlContext.createDataFrame(dataJavaRDD, DimData.class);
+//        MongoSpark.save(dataset);
+    }
+
+    public static void main(String[] args) throws ParseException {
+        System.setProperty("hadoop.home.dir", "D:\\Spark");
+
+        /* Create the SparkSession.
+         * If config arguments are passed from the command line using --conf,
+         * parse args for the values to set.
+         */
+        SparkSession spark = SparkSession.builder()
+                .master("local")
+                .appName("MongoSparkConnectorIntro")
+                .config("spark.mongodb.input.uri", "mongodb://127.0.0.1/hlebDB.datas")
+                .config("spark.mongodb.output.uri", "mongodb://127.0.0.1/hlebDB.datas")
+                .getOrCreate();
+
+        // Create a JavaSparkContext using the SparkSession's SparkContext object
+        JavaSparkContext jsc = new JavaSparkContext(spark.sparkContext());
+
+        new DataRepository().addAll(jsc);
     }
 }

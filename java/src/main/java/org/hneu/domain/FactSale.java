@@ -54,22 +54,4 @@ public class FactSale implements Serializable {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
-
-    public static void main(String[] args) throws ParseException {
-        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar calendar = Calendar.getInstance();
-        String startDate = "2010-02-12";
-        int endYear = 2011;
-        int endMonth = 5;
-        int endDay = 2;
-
-        for (int i = 0; i < 12; i++) {
-            calendar.setTime(sdf.parse(startDate));
-            calendar.add(Calendar.DATE, 30);
-            Date newDate = calendar.getTime();
-            startDate = sdf.format(newDate);
-            System.out.println(newDate);
-        }
-
-    }
 }

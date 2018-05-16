@@ -9,36 +9,24 @@ import org.apache.spark.sql.SparkSession;
 import org.hneu.domain.FactSale;
 
 import java.io.Serializable;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
-import java.util.TimeZone;
 
 public class SaleRepository implements Serializable {
 
     private void fill(List<FactSale> sales) throws ParseException {
-        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        int day;
-        int month;
-        int year;
-        String date;
+        Random rnd = new Random();
 
         for (int i = 0; i < 10_000; i++) {
-            day = new Random().nextInt(26) + 1;
-            month = new Random().nextInt(11) + 1;
-            year = new Random().nextInt(8) + 2010;
-            date = year + "-" + month + "-" + day;
             //date = "2016-10-01T00:00:00";
             FactSale factSale = new FactSale();
-            factSale.setDataId(new Random().nextInt(10_000));
-            factSale.setTovarId(new Random().nextInt(10_000));
-            factSale.setManufacturerId(new Random().nextInt(10_000));
-            factSale.setCost(new Random().nextInt());
+            factSale.setDataId(rnd.nextInt(10_000));
+            factSale.setTovarId(rnd.nextInt(10_000));
+            factSale.setManufacturerId(rnd.nextInt(10_000));
+            factSale.setCost(rnd.nextInt(10_000));
+            factSale.setQuantity(rnd.nextInt(100));
             sales.add(factSale);
         }
     }

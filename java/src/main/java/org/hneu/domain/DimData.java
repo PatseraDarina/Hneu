@@ -3,12 +3,15 @@ package org.hneu.domain;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class DimData implements Serializable {
 
     private int id;
-    private Date date;
+    private LocalDateTime date;
     private int year;
     private int numMonth;
     private int dayMonth;
@@ -21,11 +24,11 @@ public class DimData implements Serializable {
         this.id = id;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -53,9 +56,4 @@ public class DimData implements Serializable {
         this.dayMonth = dayMonth;
     }
 
-    public static void main(String[] args) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
-        Date date = sdf.parse("5/1/2018");
-        System.out.println(date); //15/10/2013
-    }
 }
