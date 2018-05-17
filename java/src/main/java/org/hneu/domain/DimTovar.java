@@ -4,17 +4,17 @@ import java.io.Serializable;
 
 public class DimTovar implements Serializable {
 
-    private int id;
+    private int tovarId;
     private String tovar;
     private int price;
     private int purchasePrice;
 
-    public int getId() {
-        return id;
+    public int getTovarId() {
+        return tovarId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setTovarId(int tovarId) {
+        this.tovarId = tovarId;
     }
 
     public int getPrice() {

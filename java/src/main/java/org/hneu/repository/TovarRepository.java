@@ -20,7 +20,7 @@ public class TovarRepository {
         int price;
         for (int i = 0; i < 10_000; i++) {
             DimTovar dimTovar = new DimTovar();
-            dimTovar.setId(i);
+            dimTovar.setTovarId(i);
             price = new Random().nextInt(20) + 1;
             dimTovar.setPurchasePrice(price);
             dimTovar.setPrice(price + 5);

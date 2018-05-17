@@ -11,7 +11,7 @@ import java.util.Date;
 public class DimData implements Serializable {
 
     private int id;
-    private LocalDateTime date;
+    private String date;
     private int year;
     private int numMonth;
     private int dayMonth;
@@ -24,11 +24,11 @@ public class DimData implements Serializable {
         this.id = id;
     }
 
-    public LocalDateTime getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

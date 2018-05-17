@@ -13,6 +13,7 @@ import org.apache.spark.sql.SQLContext;
 import org.apache.spark.sql.SparkSession;
 import org.bson.BSONObject;
 import org.bson.Document;
+import org.hneu.domain.DimData;
 import org.hneu.domain.DimManufacturer;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -31,14 +32,6 @@ public class Main extends ApplicationFrame {
 
     public Main(String title) {
         super(title);
-    }
-
-    private static void fill(List<DimManufacturer> manufacturers) {
-        for (int i =0; i < 100_000; i++) {
-            DimManufacturer dimManufacturer = new DimManufacturer();
-            dimManufacturer.setManufacturer("Х/з \"Салтівський\" " + i);
-            manufacturers.add(dimManufacturer);
-        }
     }
 
     private static XYDataset createDataSet(JavaRDD<Document> filterRdd) {
@@ -92,21 +85,14 @@ public class Main extends ApplicationFrame {
                     BSONObject.class          // Value class
             );
 
-            List<DimManufacturer> manufacturers = new LinkedList<>();
+            List<DimData> datas = new LinkedList<>();
 
-            fill(manufacturers);
-
-            JavaRDD<DimManufacturer> manufacturerJavaRDD = jsc.parallelize(manufacturers);
+            JavaRDD<DimData> dataJavaRDD = jsc.parallelize(datas);
 
             SQLContext sqlContext = new SQLContext(jsc);
 //
 ////            spark-submit —driver-library-path /home/ubuntu/hadoop-2.9.0/lib/native —class org.hneu.Main ./target/hneu-1.0-SNAPSHOT.jar
 //
-            Dataset dataset = sqlContext.createDataFrame(manufacturerJavaRDD, DimManufacturer.class);
-            dataset.createOrReplaceTempView("manufacturers");
-//
-            MongoSpark.save(dataset);
-
             JavaMongoRDD<Document> rdd = MongoSpark.load(jsc);
             Dataset<Row> datasetChart = MongoSpark.load(jsc).toDF();
 //            JavaRDD<Row> rdd = dfc.javaRDD();
