@@ -19,7 +19,7 @@ public class SaleRepository implements Serializable {
     private void fill(List<FactSale> sales) throws ParseException {
         Random rnd = new Random();
 
-        for (int i = 0; i < 10_000; i++) {
+        for (int i = 0; i < 100; i++) {
             //date = "2016-10-01T00:00:00";
             FactSale factSale = new FactSale();
             factSale.setDataId(rnd.nextInt(10_000));

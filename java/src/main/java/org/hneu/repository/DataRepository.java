@@ -20,7 +20,7 @@ public class DataRepository {
 
     private void fill(List<DimData> dates) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
-        Date startDate = sdf.parse("31-08-2015 10:20:56");
+        Date startDate = sdf.parse("31-08-2010 10:20:56");
         Date endDate = sdf.parse("09-09-2017 10:20:56");
         LocalDateTime startDateTime = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         LocalDateTime endDateTime = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
@@ -31,7 +31,7 @@ public class DataRepository {
             dimData.setDayMonth(dateTime.getDayOfMonth());
             dimData.setNumMonth(dateTime.getMonthValue());
             dimData.setYear(dateTime.getYear());
-            dimData.setId(i++);
+            dimData.setDataId(i++);
             dates.add(dimData);
         }
         DimData dimData = new DimData();

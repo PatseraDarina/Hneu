@@ -10,18 +10,18 @@ import java.util.Date;
 
 public class DimData implements Serializable {
 
-    private int id;
+    private int dataId;
     private String date;
     private int year;
     private int numMonth;
     private int dayMonth;
 
-    public int getId() {
-        return id;
+    public int getDataId() {
+        return dataId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setDataId(int dataId) {
+        this.dataId = dataId;
     }
 
     public String getDate() {

@@ -64,23 +64,4 @@ public class FactSale implements Serializable {
         this.quantity = quantity;
     }
 
-    public static void main(String[] args) {
-        SparkSession spark = SparkSession.builder()
-                .master("local")
-                .appName("MongoSparkConnectorIntro")
-                .config("spark.mongodb.input.uri", "mongodb://127.0.0.1/hlebDB.datas")
-                .config("spark.mongodb.output.uri", "mongodb://127.0.0.1/hlebDB.datas")
-                .getOrCreate();
-
-        // Create a JavaSparkContext using the SparkSession's SparkContext object
-        JavaSparkContext jsc = new JavaSparkContext(spark.sparkContext());
-        Dataset<Row> dfc = MongoSpark.load(jsc).toDF();
-        JavaMongoRDD<Document> documentJavaMongoRDD = MongoSpark.load(jsc);
-        //JavaRDD<Row> rdd = dfc.javaRDD();
-        JavaRDD<Document> filterRdd = documentJavaMongoRDD.filter(row ->
-                ((int)row.get("year") > 2015) && ((int)row.get("year") < 2017)
-        );
-
-        filterRdd.foreach(document -> System.out.println(document.toString()));
-    }
 }
